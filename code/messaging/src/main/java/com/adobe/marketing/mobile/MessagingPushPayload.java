@@ -14,6 +14,7 @@ package com.adobe.marketing.mobile;
 
 import android.app.Notification;
 
+import com.adobe.marketing.mobile.messaging.internal.MessagingConstants;
 import com.adobe.marketing.mobile.util.StringUtils;
 
 import com.adobe.marketing.mobile.services.Log;
@@ -34,17 +35,6 @@ import java.util.Map;
 public class MessagingPushPayload {
     static final String LOG_TAG = "Messaging";
     static final String SELF_TAG = "MessagingPushPayload";
-    static final String TITLE = "adb_title";
-    static final String BODY = "adb_body";
-    static final String SOUND = "adb_sound";
-    static final String NOTIFICATION_COUNT = "adb_n_count";
-    static final String NOTIFICATION_PRIORITY = "adb_n_priority";
-    static final String CHANNEL_ID = "adb_channel_id";
-    static final String ICON = "adb_icon";
-    static final String IMAGE_URL = "adb_image";
-    static final String ACTION_TYPE = "adb_a_type";
-    static final String ACTION_URI = "adb_uri";
-    static final String ACTION_BUTTONS = "adb_act";
 
     static final class NotificationPriorities {
         static final String PRIORITY_DEFAULT = "PRIORITY_DEFAULT";
@@ -172,16 +162,16 @@ public class MessagingPushPayload {
             Log.debug(LOG_TAG, SELF_TAG, "Payload extraction failed because data provided is null");
             return;
         }
-        this.title = data.get(TITLE);
-        this.body = data.get(BODY);
-        this.sound = data.get(SOUND);
-        this.channelId = data.get(CHANNEL_ID);
-        this.icon = data.get(ICON);
-        this.actionUri = data.get(ACTION_URI);
-        this.imageUrl = data.get(IMAGE_URL);
+        this.title = data.get(MessagingConstants.PushPayloadKeys.TITLE);
+        this.body = data.get(MessagingConstants.PushPayloadKeys.BODY);
+        this.sound = data.get(MessagingConstants.PushPayloadKeys.SOUND);
+        this.channelId = data.get(MessagingConstants.PushPayloadKeys.CHANNEL_ID);
+        this.icon = data.get(MessagingConstants.PushPayloadKeys.ICON);
+        this.actionUri = data.get(MessagingConstants.PushPayloadKeys.ACTION_URI);
+        this.imageUrl = data.get(MessagingConstants.PushPayloadKeys.IMAGE_URL);
 
         try {
-            String count = data.get(NOTIFICATION_COUNT);
+            String count = data.get(MessagingConstants.PushPayloadKeys.NOTIFICATION_COUNT);
             if (count != null) {
                 this.badgeCount = Integer.parseInt(count);
             }
@@ -189,9 +179,9 @@ public class MessagingPushPayload {
             Log.debug(LOG_TAG, SELF_TAG, "Exception in converting notification count to int - %s", e.getLocalizedMessage());
         }
 
-        this.notificationPriority = getNotificationPriorityFromString(data.get(NOTIFICATION_PRIORITY));
-        this.actionType = getActionTypeFromString(data.get(ACTION_TYPE));
-        this.actionButtons = getActionButtonsFromString(data.get(ACTION_BUTTONS));
+        this.notificationPriority = getNotificationPriorityFromString(data.get(MessagingConstants.PushPayloadKeys.NOTIFICATION_PRIORITY));
+        this.actionType = getActionTypeFromString(data.get(MessagingConstants.PushPayloadKeys.ACTION_TYPE));
+        this.actionButtons = getActionButtonsFromString(data.get(MessagingConstants.PushPayloadKeys.ACTION_BUTTONS));
     }
 
     private int getNotificationPriorityFromString(final String priority) {

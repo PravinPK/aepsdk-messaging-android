@@ -12,9 +12,9 @@
 
 package com.adobe.marketing.mobile.messaging.internal;
 
-final class MessagingConstants {
+final public class MessagingConstants {
 
-    static final String LOG_TAG = "Messaging";
+    public static final String LOG_TAG = "Messaging";
     static final String EXTENSION_VERSION = "2.1.2";
     static final String FRIENDLY_EXTENSION_NAME = "Messaging";
     static final String EXTENSION_NAME = "com.adobe.messaging";
@@ -29,6 +29,23 @@ final class MessagingConstants {
     static final int DEFAULT_TIMEOUT = 5;
 
     private MessagingConstants() {
+    }
+
+    final public class PushPayloadKeys {
+
+        public static final String TITLE = "adb_title";
+        public static final String BODY = "adb_body";
+        public  static final String SOUND = "adb_sound";
+        public static final String NOTIFICATION_COUNT = "adb_n_count";
+        public static final String NOTIFICATION_PRIORITY = "adb_n_priority";
+        public static final String CHANNEL_ID = "adb_channel_id";
+        public static final String ICON = "adb_icon";
+        public static final String IMAGE_URL = "adb_image";
+        public static final String ACTION_TYPE = "adb_a_type";
+        public static final String ACTION_URI = "adb_uri";
+        public static final String ACTION_BUTTONS = "adb_act";
+        private PushPayloadKeys() {
+        }
     }
 
     final class QueryParameters {
@@ -305,5 +322,6 @@ final class MessagingConstants {
             private Messaging() {
             }
         }
+
     }
 }
