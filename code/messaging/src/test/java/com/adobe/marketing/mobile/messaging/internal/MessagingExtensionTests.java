@@ -147,7 +147,7 @@ public class MessagingExtensionTests {
                 put("key", "value");
             }});
 
-            messagingExtension = new MessagingExtension(mockExtensionApi, mockMessagingRulesEngine, mockInAppNotificationHandler);
+            messagingExtension = new MessagingExtension(mockExtensionApi, mockMessagingRulesEngine, mockInAppNotificationHandler, null);
 
             runnable.run();
         }

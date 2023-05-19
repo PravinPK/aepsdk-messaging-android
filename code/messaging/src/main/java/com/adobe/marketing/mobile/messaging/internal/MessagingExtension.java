@@ -78,6 +78,8 @@ public final class MessagingExtension extends Extension {
     private final static String SELF_TAG = "MessagingExtension";
 
     final InAppNotificationHandler inAppNotificationHandler;
+
+    final PushNotificationHandler pushNotificationHandler;
     private boolean initialMessageFetchComplete = false;
     final LaunchRulesEngine messagingRulesEngine;
 
@@ -101,14 +103,15 @@ public final class MessagingExtension extends Extension {
      * @param extensionApi {@link ExtensionApi} instance
      */
     MessagingExtension(final ExtensionApi extensionApi) {
-        this(extensionApi, null, null);
+        this(extensionApi, null, null, null);
     }
 
     @VisibleForTesting
-    MessagingExtension(final ExtensionApi extensionApi, final LaunchRulesEngine messagingRulesEngine, final InAppNotificationHandler inAppNotificationHandler) {
+    MessagingExtension(final ExtensionApi extensionApi, final LaunchRulesEngine messagingRulesEngine, final InAppNotificationHandler inAppNotificationHandler, final PushNotificationHandler pushNotificationHandler) {
         super(extensionApi);
         this.messagingRulesEngine = messagingRulesEngine != null ? messagingRulesEngine : new LaunchRulesEngine(extensionApi);
         this.inAppNotificationHandler = inAppNotificationHandler != null ? inAppNotificationHandler : new InAppNotificationHandler(this, extensionApi, this.messagingRulesEngine);
+        this.pushNotificationHandler = pushNotificationHandler != null ? pushNotificationHandler : new PushNotificationHandler();
     }
 
     //region Extension interface methods
@@ -238,6 +241,12 @@ public final class MessagingExtension extends Extension {
             // handle the push token from generic identity request content event
             handlePushToken(eventToProcess);
         } else if (MessagingUtils.isMessagingRequestContentEvent(eventToProcess)) {
+
+            // todo differentiate better
+            if (eventToProcess.getName() == "Push Notification Received") {
+                pushNotificationHandler.handlePushNotificationEvent(eventToProcess);
+            }
+
             // Need experience event dataset id for sending the push token
             final Map<String, Object> configSharedState = getSharedState(MessagingConstants.SharedState.Configuration.EXTENSION_NAME, eventToProcess);
             final String experienceEventDatasetId = DataReader.optString(configSharedState, MessagingConstants.SharedState.Configuration.EXPERIENCE_EVENT_DATASET_ID, "");
