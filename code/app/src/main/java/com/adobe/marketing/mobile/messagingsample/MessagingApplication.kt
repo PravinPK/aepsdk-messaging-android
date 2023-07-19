@@ -31,10 +31,11 @@ class MessagingApplication : Application() {
 
         MobileCore.start {
             // Necessary property id which has the edge configuration id needed by aep sdk
-            MobileCore.configureWithAppID("3149c49c3910/4f6b2fbf2986/launch-7d78a5fd1de3-development")
+            MobileCore.configureWithAppID("bf7248f92b53/779ef92f7d96/launch-fa59caaf08bb-development")
             MobileCore.lifecycleStart(null)
         }
 
+        Assurance.startSession("griffon://?adb_validation_sessionid=16672226-d393-4334-884a-ead38e99af78")
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             // Log and toast

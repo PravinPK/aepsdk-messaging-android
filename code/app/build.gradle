@@ -25,6 +25,7 @@ android {
 
 buildscript {
     repositories {
+        maven { url 'https://jitpack.io' }
         mavenCentral()
         google()
     }
@@ -46,11 +47,28 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
-    implementation "com.adobe.marketing.mobile:core:$rootProject.mavenCoreVersion"
-    implementation "com.adobe.marketing.mobile:lifecycle:$rootProject.mavenLifecycleVersion"
-    implementation "com.adobe.marketing.mobile:edgeidentity:$rootProject.mavenEdgeIdentityVersion"
-    implementation "com.adobe.marketing.mobile:edge:$rootProject.mavenEdgeVersion"
-    implementation "com.adobe.marketing.mobile:assurance:$rootProject.mavenAssuranceVersion"
+//    implementation "com.adobe.marketing.mobile:core:$rootProject.mavenCoreVersion"
+//    implementation "com.adobe.marketing.mobile:lifecycle:$rootProject.mavenLifecycleVersion"
+//    implementation "com.adobe.marketing.mobile:edgeidentity:$rootProject.mavenEdgeIdentityVersion"
+//    implementation "com.adobe.marketing.mobile:edge:$rootProject.mavenEdgeVersion"
+//    implementation "com.adobe.marketing.mobile:assurance:$rootProject.mavenAssuranceVersion"
 
-    implementation project(":${rootProject.moduleProjectName}")
+    //implementation project(':core')
+    implementation 'com.adobe.marketing.mobile:core:2.1.3'
+    implementation ("com.adobe.marketing.mobile:lifecycle:$rootProject.mavenLifecycleVersion") {
+        transitive = false;
+    }
+    implementation ("com.adobe.marketing.mobile:edgeidentity:$rootProject.mavenEdgeIdentityVersion") {
+        transitive = false;
+    }
+    implementation ("com.adobe.marketing.mobile:edge:2.1.0") {
+        transitive = false;
+    }
+    implementation ("com.adobe.marketing.mobile:assurance:$rootProject.mavenAssuranceVersion") {
+        transitive = false;
+    }
+    implementation ("com.adobe.marketing.mobile:messaging:2.1.0") {
+        transitive = false;
+    }
+    //implementation project(":${rootProject.moduleProjectName}")
 }

@@ -1,2 +1,3 @@
-include ':app', ':messaging', ':messagingtestutils'
+include ':app', ':messaging', ':messagingtestutils' , 'core'
 rootProject.name='aepsdk-messaging-android'
+//project(':core').projectDir = new File(settingsDir, './../../../Core/Android/aepsdk-core-android/code/core')

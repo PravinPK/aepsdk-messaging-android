@@ -18,13 +18,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Build.VERSION_CODES.M
 import androidx.core.app.NotificationCompat
 import com.adobe.marketing.mobile.Messaging
 import com.adobe.marketing.mobile.MessagingPushPayload
 import com.adobe.marketing.mobile.MobileCore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import android.os.Build.VERSION_CODES.M
 
 class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
@@ -57,7 +57,7 @@ class NotificationService : FirebaseMessagingService() {
         val builder = NotificationCompat.Builder(this, channelId).apply {
             setSmallIcon(R.drawable.ic_launcher_background)
             setContentTitle(payload.title)
-            setContentTitle(payload.body)
+            setContentText(payload.body)
 
             priority = payload.notificationPriority
             setContentIntent(PendingIntent.getActivity(this@NotificationService, 0, Intent(this@NotificationService, MainActivity::class.java).apply {
@@ -68,6 +68,13 @@ class NotificationService : FirebaseMessagingService() {
             }, if(Build.VERSION.SDK_INT >= M) PendingIntent.FLAG_IMMUTABLE else 0))
             setAutoCancel(true)
         }
+
+        // write code to read action button from payload and add it to notification
+        for (action in payload.actionButtons) {
+            builder.addAction(NotificationCompat.Action(0, action.label, PendingIntent.getActivity(this@NotificationService, 0, Intent(this@NotificationService, MainActivity::class.java).apply {
+            }, if(Build.VERSION.SDK_INT >= M) PendingIntent.FLAG_IMMUTABLE else 0)))
+        }
+
 
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
