@@ -22,7 +22,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.HashMap;
 import java.util.Random;
 
-
 public class AdobeMessagingService extends FirebaseMessagingService {
 
     static final String SELF_TAG = "AdobeMessagingService";
@@ -39,6 +38,7 @@ public class AdobeMessagingService extends FirebaseMessagingService {
         handleRemoteMessage(remoteMessage);
     }
 
+   // This method handles the remote message and dispatches the Push Notification Received event.
     public static boolean handleRemoteMessage(@NonNull RemoteMessage remoteMessage) {
         if (!isAdobePushNotification(remoteMessage)) {
             Log.debug(MessagingConstants.LOG_TAG, SELF_TAG, "The received push message is not generated from Adobe Journey Optimizer, Messaging extension is ignoring to display the push notification.");
@@ -51,10 +51,14 @@ public class AdobeMessagingService extends FirebaseMessagingService {
         Event pushNotificationReceivedEvent = new Event.Builder("Push Notification Received", EventType.MESSAGING, EventSource.REQUEST_CONTENT).setEventData(notificationData).build();
         MobileCore.dispatchEvent(pushNotificationReceivedEvent);
         return true;
-
     }
 
 
+    // This method looks at the remote message and determines if it is an Adobe push notification
+    // by checking if it contains the title and body keys.
+    // This is a temporary solution until we have a better way to identify Adobe push notifications.
+    // @param remoteMessage the remote message to check
+    // @return true if the remote message is an Adobe push notification, false otherwise.
     private static boolean isAdobePushNotification(@NonNull RemoteMessage remoteMessage) {
         return remoteMessage.getData() != null &&
                 remoteMessage.getData().containsKey(MessagingConstants.PushPayloadKeys.TITLE) &&
