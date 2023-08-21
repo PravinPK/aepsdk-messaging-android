@@ -58,6 +58,7 @@ import com.adobe.marketing.mobile.EventType;
 import com.adobe.marketing.mobile.Extension;
 import com.adobe.marketing.mobile.ExtensionApi;
 import com.adobe.marketing.mobile.ExtensionEventListener;
+import com.adobe.marketing.mobile.Messaging;
 import com.adobe.marketing.mobile.MessagingEdgeEventType;
 import com.adobe.marketing.mobile.SharedStateResolution;
 import com.adobe.marketing.mobile.SharedStateResult;
@@ -85,6 +86,8 @@ public final class MessagingExtension extends Extension {
     final InAppNotificationHandler inAppNotificationHandler;
     private boolean initialMessageFetchComplete = false;
     final LaunchRulesEngine messagingRulesEngine;
+
+    final List<String> trackedNotifications = new ArrayList<>();
 
     /**
      * Constructor.
@@ -159,6 +162,7 @@ public final class MessagingExtension extends Extension {
         getApi().registerEventListener(EventType.EDGE, MessagingConstants.EventSource.PERSONALIZATION_DECISIONS, this::processEvent);
         getApi().registerEventListener(EventType.WILDCARD, EventSource.WILDCARD, this::handleWildcardEvents);
         getApi().registerEventListener(EventType.RULES_ENGINE, EventSource.RESPONSE_CONTENT, this::handleRuleEngineResponseEvents);
+        getApi().registerEventListener(EventType.GENERIC_DATA, EventSource.OS, this::handleAutomaticTracking);
     }
 
     @Override
@@ -250,8 +254,7 @@ public final class MessagingExtension extends Extension {
             handlePushToken(eventToProcess);
         } else if (MessagingUtils.isMessagingRequestContentEvent(eventToProcess)) {
             // Need experience event dataset id for sending the push token
-            final Map<String, Object> configSharedState = getSharedState(MessagingConstants.SharedState.Configuration.EXTENSION_NAME, eventToProcess);
-            final String experienceEventDatasetId = DataReader.optString(configSharedState, MessagingConstants.SharedState.Configuration.EXPERIENCE_EVENT_DATASET_ID, "");
+            final String experienceEventDatasetId = getPushTrackingDatasetId(eventToProcess);
             if (StringUtils.isNullOrEmpty(experienceEventDatasetId)) {
                 Log.warning(LOG_TAG, SELF_TAG, "Unable to track push notification interaction, experience event dataset id is empty. Check the messaging launch extension to add the experience event dataset.");
                 return;
@@ -343,6 +346,36 @@ public final class MessagingExtension extends Extension {
                 MessagingConstants.EventSource.REQUEST_CONTENT,
                 xdmData,
                 getApi());
+    }
+
+    void handleAutomaticTracking(final Event event) {
+        final Map<String, Object> eventData = event.getEventData();
+        if (eventData == null) {
+            Log.debug(LOG_TAG, SELF_TAG, "handleAutomaticTracking - Cannot track information, eventData is null.");
+            return;
+        }
+
+        if (DataReader.optBoolean(eventData,"AJOPushInteraction",false)) {
+            final String experienceEventDatasetId = getPushTrackingDatasetId(event);
+            if (StringUtils.isNullOrEmpty(experienceEventDatasetId)) {
+                Log.warning(LOG_TAG, SELF_TAG, "Unable to track push notification interaction, experience event dataset id is empty. Check the messaging launch extension to add the experience event dataset.");
+                return;
+            }
+
+            final String messageId = DataReader.optString(eventData, "messageId", "");
+
+            if (StringUtils.isNullOrEmpty(messageId)) {
+                Log.debug(LOG_TAG, SELF_TAG, "handleTrackingInfo - Cannot track information, messageId is either null or empty.");
+                return;
+            }
+
+            if (trackedNotifications.contains(messageId)) {
+                Log.debug(LOG_TAG, SELF_TAG, "handleTrackingInfo - Cannot track information, messageId (%s) has already been tracked.", messageId);
+                return;
+            }
+
+            handleTrackingInfo(event,experienceEventDatasetId);
+        }
     }
 
     /**
@@ -548,6 +581,11 @@ public final class MessagingExtension extends Extension {
         } catch (final JSONException | ClassCastException e) {
             Log.warning(LOG_TAG, SELF_TAG, "Failed to send Adobe data with the tracking data, Adobe data is malformed : %s", e.getMessage());
         }
+    }
+
+    private String getPushTrackingDatasetId(final Event event) {
+        final Map<String, Object> configSharedState = getSharedState(MessagingConstants.SharedState.Configuration.EXTENSION_NAME, event);
+        return DataReader.optString(configSharedState, MessagingConstants.SharedState.Configuration.EXPERIENCE_EVENT_DATASET_ID, "");
     }
 
     private boolean hasValidSharedState(final String extensionName, final Event event) {
