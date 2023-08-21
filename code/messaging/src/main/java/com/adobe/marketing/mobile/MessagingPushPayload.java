@@ -74,6 +74,7 @@ public class MessagingPushPayload {
     private String actionUri;
     private List<ActionButton> actionButtons = new ArrayList<>(ACTION_BUTTON_CAPACITY);
     private Map<String, String> data;
+    private String messageId;
 
     /**
      * Constructor
@@ -91,6 +92,12 @@ public class MessagingPushPayload {
             Log.error(LOG_TAG, SELF_TAG, "Failed to create MessagingPushPayload, remote message data payload is null");
             return;
         }
+
+        if(StringUtils.isNullOrEmpty(message.getMessageId())) {
+            Log.error(LOG_TAG, SELF_TAG, "Failed to create MessagingPushPayload, message id is null or empty");
+            return;
+        }
+        messageId = message.getMessageId();
         init(message.getData());
     }
 
@@ -138,6 +145,9 @@ public class MessagingPushPayload {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+    public String getMessageId() {
+        return messageId;
     }
 
     /**
