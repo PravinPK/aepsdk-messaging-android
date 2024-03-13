@@ -82,6 +82,7 @@ class EdgePersonalizationResponseHandler {
     }
 
     @VisibleForTesting
+    @SuppressWarnings("checkstyle:NestedIfDepth")
     EdgePersonalizationResponseHandler(final MessagingExtension parent, final ExtensionApi extensionApi, final LaunchRulesEngine rulesEngine, final FeedRulesEngine feedRulesEngine, final MessagingCacheUtilities messagingCacheUtilities) {
         this.parent = parent;
         this.extensionApi = extensionApi;
@@ -508,6 +509,7 @@ class EdgePersonalizationResponseHandler {
         propositionInfo = tempPropositionInfoMap;
     }
 
+   @SuppressWarnings("NestedForDepth")
     private Map<Surface, List<Proposition>> getPropositionsFromFeedRulesEngine(final Event event) {
         Map<Surface, List<Proposition>> surfacePropositions = new HashMap<>();
         final Map<Surface, List<PropositionItem>> propositionItemsBySurface = feedRulesEngine.evaluate(event);
