@@ -3,7 +3,6 @@
   This file is licensed to you under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License. You may obtain a copy
   of the License at http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software distributed under
   the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
   OF ANY KIND, either express or implied. See the License for the specific language
@@ -15,7 +14,6 @@ package com.adobe.marketing.mobile.messaging;
 import com.adobe.marketing.mobile.services.Log;
 import com.adobe.marketing.mobile.util.DataReader;
 import com.adobe.marketing.mobile.util.DataReaderException;
-
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -24,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A {@link Proposition} object encapsulates offers and the information needed for tracking offer interactions.
+ * A {@link Proposition} object encapsulates offers and the information needed for tracking offer
+ * interactions.
  */
 public class Proposition implements Serializable {
     private static final String SELF_TAG = "MessagingProposition";
@@ -42,7 +41,11 @@ public class Proposition implements Serializable {
     // List containing proposition decision items
     private final List<PropositionItem> propositionItems;
 
-    public Proposition(final String uniqueId, final String scope, final Map<String, Object> scopeDetails, final List<PropositionItem> propositionItems) {
+    public Proposition(
+            final String uniqueId,
+            final String scope,
+            final Map<String, Object> scopeDetails,
+            final List<PropositionItem> propositionItems) {
         this.uniqueId = uniqueId;
         this.scope = scope;
         this.scopeDetails = scopeDetails;
@@ -100,8 +103,10 @@ public class Proposition implements Serializable {
         try {
             final String uniqueId = DataReader.getString(eventData, PAYLOAD_ID);
             final String scope = DataReader.getString(eventData, PAYLOAD_SCOPE);
-            final Map<String, Object> scopeDetails = DataReader.getTypedMap(Object.class, eventData, PAYLOAD_SCOPE_DETAILS);
-            final List<Map<String, Object>> items = DataReader.getTypedListOfMap(Object.class, eventData, PAYLOAD_ITEMS);
+            final Map<String, Object> scopeDetails =
+                    DataReader.getTypedMap(Object.class, eventData, PAYLOAD_SCOPE_DETAILS);
+            final List<Map<String, Object>> items =
+                    DataReader.getTypedListOfMap(Object.class, eventData, PAYLOAD_ITEMS);
             final List<PropositionItem> propositionItems = new ArrayList<>();
             for (final Map<String, Object> item : items) {
                 final PropositionItem propositionItem = PropositionItem.fromEventData(item);
@@ -111,7 +116,11 @@ public class Proposition implements Serializable {
             }
             proposition = new Proposition(uniqueId, scope, scopeDetails, propositionItems);
         } catch (final DataReaderException dataReaderException) {
-            Log.trace(MessagingConstants.LOG_TAG, SELF_TAG, "Exception occurred creating MessagingProposition from event data map: %s", dataReaderException.getLocalizedMessage());
+            Log.trace(
+                    MessagingConstants.LOG_TAG,
+                    SELF_TAG,
+                    "Exception occurred creating MessagingProposition from event data map: %s",
+                    dataReaderException.getLocalizedMessage());
         }
 
         return proposition;
@@ -138,7 +147,8 @@ public class Proposition implements Serializable {
     public boolean equals(final Object object) {
         if (object instanceof Proposition) {
             final Proposition proposition = (Proposition) object;
-            final Map<String, Object> newPropositionContent = proposition.getItems().get(0).getData();
+            final Map<String, Object> newPropositionContent =
+                    proposition.getItems().get(0).getData();
             final Map<String, Object> propositionContent = this.getItems().get(0).getData();
             return newPropositionContent.equals(propositionContent);
         } else {
